@@ -1,0 +1,22 @@
+<%- include('header') %>
+
+<body class="container mt-5">
+    <h2 class="mb-4">Welcome to member's page <%= username %></h2>
+
+    <h3 class="mb-4">
+        <% if(randomValue === 1) { %>
+            Here's Peter Griffin
+        <% } else if(randomValue === 2) { %>
+            Here's Homer Simpson
+        <% } else if(randomValue === 3) { %>
+            Here's Stan Smith
+        <% } %>
+    </h3>
+
+    <a href="/" class="btn btn-secondary text-white">Home</a>
+    <div>
+        <img src="/cartoon<%= randomValue %>.jpg" alt="Cartoon Image" width="300" height="525">
+    </div>
+</body>
+
+<%- include('footer') %>
