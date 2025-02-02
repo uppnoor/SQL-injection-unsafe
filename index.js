@@ -29,6 +29,7 @@ const mongo_user = process.env.MONGO_USER;
 const mongo_session_secret = process.env.SESSION_SECRET;
 const mysql_password = process.env.MYSQL_DB_PASSWORD;
 const mysql_username = process.env.MYSQL_USERNAME;
+const my_sql_port = process.env.MYSQL_PORT;
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongo_user}:${mongo_password}@cluster0.fwhcn.mongodb.net/assignment1?retryWrites=true&w=majority`,
