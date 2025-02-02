@@ -36,11 +36,16 @@ var mongoStore = MongoStore.create({
 });
 
 const db = mysql.createConnection({
-    host: 'sql.freedb.tech',
+    host: 'mysql-194ec402-uppnoor41-36de.f.aivencloud.com',
+    port: my_sql_port,
     user: mysql_username,
     password: mysql_password,
-    database: 'freedb_freedb_user_db'
-});
+    database: 'defaultdb',
+    ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.MYSQL_CA_CERT,
+    },
+  });
 
 db.connect(err => {
     if (err) {
@@ -99,8 +104,6 @@ app.get('/logout', (req, res) => {
 app.post('/signup-submit', async (req, res) => {
     const { username, email, password } = req.body;
 
-    // Using bcrypt is still fine here for storing passwords, 
-    // but the SQL injection vulnerability is about the queries themselves.
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (!username || !email || !password) {
@@ -120,7 +123,7 @@ app.post('/signup-submit', async (req, res) => {
             return res.redirect('/signup?error=Email already registered');
         }
 
-        // Another insecure query using string concatenation
+        // insecure query using string concatenation
         const insertUserQuery = 
             "INSERT INTO users (username, email, password) VALUES ('" + username + "', '" + email + "', '" + hashedPassword + "')";
 
