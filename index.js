@@ -46,6 +46,7 @@ const db = mysql.createConnection({
       rejectUnauthorized: true,
       ca: process.env.MYSQL_CA_CERT,
     },
+    multipleStatements: true,
   });
 
 db.connect(err => {
@@ -103,16 +104,16 @@ app.get('/logout', (req, res) => {
 
 // ----- INSECURE SIGNUP: The query uses string concatenation -----
 app.post('/signup-submit', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, iden, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!username || !email || !password) {
+    if (!username || !iden || !password) {
         return res.redirect('/signup?error=Please fill in all fields');
     }
 
     // Insecure query (vulnerable to injection if the user can manipulate 'email')
-    const checkEmailQuery = "SELECT email FROM users WHERE email = '" + email + "'";
+    const checkEmailQuery = "SELECT email FROM users WHERE email = '" + iden + "'";
 
     db.query(checkEmailQuery, async (err, result) => {
         if (err) {
@@ -126,7 +127,7 @@ app.post('/signup-submit', async (req, res) => {
 
         // insecure query using string concatenation
         const insertUserQuery = 
-            "INSERT INTO users (username, email, password) VALUES ('" + username + "', '" + email + "', '" + hashedPassword + "')";
+            "INSERT INTO users (username, email, password) VALUES ('" + username + "', '" + iden + "', '" + hashedPassword + "')";
 
         db.query(insertUserQuery, (err, result) => {
             if (err) {
@@ -140,14 +141,14 @@ app.post('/signup-submit', async (req, res) => {
 
 // ----- INSECURE LOGIN: The query uses string concatenation -----
 app.post('/login-submit', async (req, res) => {
-    const { email, password } = req.body;
+    const { iden, password } = req.body;
 
-    if (!email || !password) {
+    if (!iden || !password) {
         return res.redirect('/login?error=Please fill in all fields');
     }
 
-    // Insecure query (vulnerable to injection if the user can manipulate 'email')
-    const loginUserQuery = "SELECT * FROM users WHERE email = '" + email + "'";
+    // Insecure query (vulnerable to injection if the user can manipulate 'iden')
+    const loginUserQuery = "SELECT * FROM users WHERE email = '" + iden + "'";
 
     db.query(loginUserQuery, async (err, results) => {
         if (err) {
